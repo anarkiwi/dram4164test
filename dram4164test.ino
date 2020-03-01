@@ -26,6 +26,7 @@ void loop()  {
   for (byte bval = 0; bval < 2; ++bval) {
     for (uint16_t row = 0; row < 256; ++row) {
       addr.row = row;
+      uint8_t row_mismatches = 0;
       DRAM_refresh(addr);
       for (uint16_t col = 0; col < 256; ++col) {
         addr.col = col;
@@ -33,12 +34,18 @@ void loop()  {
         volatile byte rbval = DRAM_read(addr);
         // Dump row/col on mismatch.
         if (rbval != bval) {
-          Serial.print(rbval);
-          Serial.print(" ");
-          Serial.print(addr.row);
-          Serial.print(":");
-          Serial.println(addr.col);
+          if (!row_mismatches++) {
+            Serial.print("bit wrong ");
+            Serial.print(rbval);
+            Serial.print(" r");
+            Serial.print(addr.row);
+          }
+          Serial.print(" c");
+          Serial.print(addr.col);
         }
+      }
+      if (row_mismatches) {
+        Serial.println();
       }
     }
     Serial.println();
