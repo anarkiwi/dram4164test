@@ -23,6 +23,7 @@ void loop()  {
   // Write alternating 0/1s to entire 16b address space.
   Serial.println("===");
   mem_addr addr = {.row = 0, .col = 0};
+  uint16_t wrongbits = 0;
   for (byte bval = 0; bval < 2; ++bval) {
     for (uint16_t row = 0; row < 256; ++row) {
       addr.row = row;
@@ -40,6 +41,7 @@ void loop()  {
             Serial.print(" r");
             Serial.print(addr.row);
           }
+          ++wrongbits;
           Serial.print(" c");
           Serial.print(addr.col);
         }
@@ -47,6 +49,10 @@ void loop()  {
       if (row_mismatches) {
         Serial.println();
       }
+    }
+    if (wrongbits) {
+      Serial.print("total wrong: ");
+      Serial.println(wrongbits);
     }
     Serial.println();
   }
