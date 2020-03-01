@@ -30,7 +30,7 @@ void loop()  {
       for (uint16_t col = 0; col < 256; ++col) {
         addr.col = col;
         DRAM_write(addr, bval);
-        byte rbval = DRAM_read(addr);
+        volatile byte rbval = DRAM_read(addr);
         // Dump row/col on mismatch.
         if (rbval != bval) {
           interrupts();
