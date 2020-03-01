@@ -13,20 +13,21 @@
 // TODO: eliminate slow digitalWrite()/digitalRead() from DRAMutils.
 #include <DRAMutils.h> 
 
-void setup()
-{
+void setup() {
   DRAM_setup();
   Serial.begin(115200);
 }
 
-void loop()
-{
+void loop()  {
   // TODO: add more tests.
   // Write alternating 0/1s to entire 16b address space.
+  mem_addr addr = {.row = 0, .col = 0};
   for (byte bval = 0; bval < 2; ++bval) {
     for (uint16_t row = 0; row < 256; ++row) {
+      addr.row = row;
+      DRAM_refresh(addr);
       for (uint16_t col = 0; col < 256; ++col) {
-        mem_addr addr = {.row = row, .col = col};
+        addr.col = col;
         DRAM_write(addr, bval);
         byte rbval = DRAM_read(addr);
         // Dump row/col on mismatch.
@@ -39,7 +40,6 @@ void loop()
           Serial.print(" r:");
           Serial.println(rbval);
         }
-        DRAM_refresh(addr);
       }
     }
   }
