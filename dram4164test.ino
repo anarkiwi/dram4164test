@@ -22,6 +22,7 @@ void loop()  {
   // TODO: add more tests.
   // Write alternating 0/1s to entire 16b address space.
   mem_addr addr = {.row = 0, .col = 0};
+  noInterrupts();
   for (byte bval = 0; bval < 2; ++bval) {
     for (uint16_t row = 0; row < 256; ++row) {
       addr.row = row;
@@ -32,6 +33,7 @@ void loop()  {
         byte rbval = DRAM_read(addr);
         // Dump row/col on mismatch.
         if (rbval != bval) {
+          interrupts();
           Serial.print(addr.row);
           Serial.print(":");
           Serial.print(addr.col);
@@ -39,9 +41,13 @@ void loop()  {
           Serial.print(bval);
           Serial.print(" r:");
           Serial.println(rbval);
+          Serial.flush();
+          noInterrupts();
         }
       }
     }
   }
+  interrupts();
   Serial.println("===");
+  Serial.flush();
 }
